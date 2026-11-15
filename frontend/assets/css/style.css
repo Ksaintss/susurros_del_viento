@@ -1,0 +1,495 @@
+/* =======================================================
+   ESTILOS GENERALES - TIENDA ARTESANAL GHIBLI (ESTILO GEF)
+   ======================================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #FAF9F6; /* Blanco crema muy suave */
+    color: #222222;
+    line-height: 1.6;
+    padding-top: 85px; /* Espacio para el menú superior fijo */
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* =======================================================
+   BARRA DE NAVEGACIÓN FIJA SUPERIOR (.barra-navegacion)
+   ======================================================= */
+
+.barra-navegacion {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #FFFFFF;
+    border-bottom: 1px solid #E5E5E0;
+    padding: 18px 5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 1000;
+}
+
+.logo-tienda {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #1A1A1A;
+}
+
+.logo-tienda span {
+    font-weight: 400;
+    font-size: 13px;
+    color: #5C6F58;
+    display: block;
+    letter-spacing: 1px;
+}
+
+.enlaces-menu {
+    list-style: none;
+    display: flex;
+    gap: 28px;
+    align-items: center;
+}
+
+.enlaces-menu li a {
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #333333;
+    padding-bottom: 4px;
+    border-bottom: 2px solid transparent;
+}
+
+.enlaces-menu li a:hover,
+.enlaces-menu li a.activo {
+    color: #111111;
+    border-bottom: 2px solid #2F4F3E;
+}
+
+.contador-carrito {
+    background-color: #2F4F3E;
+    color: #FFFFFF;
+    font-size: 12px;
+    padding: 2px 7px;
+    border-radius: 10px;
+    margin-left: 4px;
+}
+
+/* =======================================================
+   BANNERS PRINCIPALES ESTILO GEF (.banner-principal)
+   ======================================================= */
+
+.banner-principal {
+    width: 92%;
+    max-width: 1280px;
+    margin: 20px auto 40px auto;
+    background-color: #EFECE6;
+    border: 1px solid #E2DED5;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    overflow: hidden;
+}
+
+.banner-texto {
+    flex: 1;
+    min-width: 300px;
+    padding: 50px 45px;
+}
+
+.banner-etiqueta {
+    display: inline-block;
+    background-color: #2F4F3E;
+    color: #FFFFFF;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    padding: 5px 12px;
+    margin-bottom: 15px;
+}
+
+.banner-texto h1 {
+    font-size: 36px;
+    font-weight: 700;
+    color: #1A1A1A;
+    margin-bottom: 15px;
+    line-height: 1.2;
+}
+
+.banner-texto p {
+    font-size: 16px;
+    color: #555555;
+    margin-bottom: 25px;
+}
+
+.banner-imagen {
+    flex: 1.2;
+    min-width: 320px;
+    height: 400px;
+}
+
+.banner-imagen img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.banner-secundario {
+    width: 92%;
+    max-width: 1280px;
+    margin: 40px auto;
+    background-color: #FFFFFF;
+    border: 1px solid #E5E5E0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.banner-secundario .banner-imagen {
+    height: 300px;
+}
+
+/* =======================================================
+   BOTONES GENERALES
+   ======================================================= */
+
+.boton-principal {
+    display: inline-block;
+    background-color: #1A1A1A;
+    color: #FFFFFF;
+    padding: 12px 26px;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border: none;
+    cursor: pointer;
+}
+
+.boton-principal:hover {
+    background-color: #2F4F3E;
+}
+
+.boton-agregar {
+    width: 100%;
+    background-color: #1A1A1A;
+    color: #FFFFFF;
+    border: none;
+    padding: 11px 15px;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    cursor: pointer;
+    margin-top: 12px;
+}
+
+.boton-agregar:hover {
+    background-color: #2F4F3E;
+}
+
+.boton-eliminar {
+    background-color: #B93829;
+    color: #FFFFFF;
+    border: none;
+    padding: 7px 12px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.boton-eliminar:hover {
+    background-color: #8F281C;
+}
+
+/* =======================================================
+   SECCIONES Y TÍTULOS
+   ======================================================= */
+
+.contenedor-seccion {
+    width: 92%;
+    max-width: 1280px;
+    margin: 45px auto;
+}
+
+.titulo-seccion {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.titulo-seccion h2 {
+    font-size: 26px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #1A1A1A;
+    margin-bottom: 8px;
+}
+
+.titulo-seccion p {
+    font-size: 15px;
+    color: #666666;
+}
+
+/* Filtros sencillos por personaje en el catálogo */
+.barra-filtros {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 30px;
+}
+
+.boton-filtro {
+    background-color: #FFFFFF;
+    border: 1px solid #CCCCCC;
+    padding: 8px 18px;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    color: #333333;
+}
+
+.boton-filtro:hover,
+.boton-filtro.activo {
+    background-color: #1A1A1A;
+    color: #FFFFFF;
+    border-color: #1A1A1A;
+}
+
+/* =======================================================
+   CUADRÍCULA Y TARJETAS DE PRODUCTOS (.contenedor-productos, .tarjeta-producto)
+   ======================================================= */
+
+.contenedor-productos {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+    gap: 28px;
+}
+
+.tarjeta-producto {
+    background-color: #FFFFFF;
+    border: 1px solid #E8E6DF;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.tarjeta-producto img {
+    width: 100%;
+    height: 290px;
+    object-fit: cover;
+    display: block;
+    background-color: #F0EFEA;
+}
+
+.info-producto {
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    justify-content: space-between;
+}
+
+.etiqueta-personaje {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #5C6F58;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.info-producto h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1A1A1A;
+    margin-bottom: 8px;
+}
+
+.info-producto p {
+    font-size: 13px;
+    color: #666666;
+    margin-bottom: 12px;
+}
+
+.precio-producto {
+    font-size: 17px;
+    font-weight: 700;
+    color: #111111;
+}
+
+/* =======================================================
+   SECCIÓN MISIÓN Y VISIÓN (.mision-vision)
+   ======================================================= */
+
+.mision-vision {
+    width: 92%;
+    max-width: 1280px;
+    margin: 55px auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 25px;
+}
+
+.caja-mision {
+    flex: 1;
+    min-width: 280px;
+    background-color: #FFFFFF;
+    border: 1px solid #E5E5E0;
+    padding: 35px 30px;
+}
+
+.caja-mision h3 {
+    font-size: 18px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #2F4F3E;
+    margin-bottom: 14px;
+    border-bottom: 2px solid #EFECE6;
+    padding-bottom: 8px;
+}
+
+.caja-mision p {
+    font-size: 15px;
+    color: #444444;
+}
+
+/* =======================================================
+   TABLA DEL CARRITO DE COMPRAS (.tabla-carrito)
+   ======================================================= */
+
+.contenedor-carrito {
+    background-color: #FFFFFF;
+    border: 1px solid #E5E5E0;
+    padding: 25px;
+}
+
+.tabla-carrito {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 25px;
+}
+
+.tabla-carrito th,
+.tabla-carrito td {
+    padding: 14px 12px;
+    text-align: left;
+    border-bottom: 1px solid #E8E6DF;
+    font-size: 14px;
+}
+
+.tabla-carrito th {
+    background-color: #F5F4F0;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 1px;
+    color: #333333;
+}
+
+.resumen-carrito {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    padding-top: 15px;
+}
+
+.total-pagar {
+    font-size: 22px;
+    font-weight: 700;
+    color: #1A1A1A;
+}
+
+/* =======================================================
+   FORMULARIOS (CONTACTO, LOGIN, DASHBOARD) (.formulario)
+   ======================================================= */
+
+.contenedor-doble {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    justify-content: center;
+}
+
+.formulario {
+    background-color: #FFFFFF;
+    border: 1px solid #E5E5E0;
+    padding: 32px;
+    width: 100%;
+    max-width: 520px;
+    margin: 0 auto;
+}
+
+.formulario h3 {
+    font-size: 18px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 20px;
+    color: #1A1A1A;
+    border-bottom: 1px solid #EEEEEE;
+    padding-bottom: 10px;
+}
+
+.grupo-campo {
+    margin-bottom: 16px;
+}
+
+.grupo-campo label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #333333;
+}
+
+.grupo-campo input,
+.grupo-campo textarea,
+.grupo-campo select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #CCCCCC;
+    background-color: #FAFAFA;
+    font-size: 14px;
+    font-family: inherit;
+}
+
+.grupo-campo textarea {
+    height: 110px;
+    resize: vertical;
+}
+
+.mensaje-estado {
+    margin-top: 14px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #2F4F3E;
+}
+
+/* =======================================================
+   PIE DE PÁGINA (FOOTER)
+   ======================================================= */
+
+.pie-pagina {
+    background-color: #FFFFFF;
+    border-top: 1px solid #E5E5E0;
+    text-align: center;
+    padding: 28px 15px;
+    margin-top: 60px;
+    font-size: 13px;
+    color: #666666;
+}
+

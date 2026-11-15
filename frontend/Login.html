@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión | Bosque Ghibli</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+    <!-- Barra de navegación superior fija -->
+    <header class="barra-navegacion">
+        <a href="index.html" class="logo-tienda">
+            Bosque Ghibli
+            <span>Arte &amp; Hecho a Mano</span>
+        </a>
+        <ul class="enlaces-menu">
+            <li><a href="index.html">Inicio</a></li>
+            <li><a href="Catalogo.html">Catálogo</a></li>
+            <li><a href="Carrito.html">Carrito <span id="contador-carrito" class="contador-carrito">0</span></a></li>
+            <li><a href="Contacto.html">Contacto</a></li>
+            <li><a href="Login.html" class="activo">Login</a></li>
+            <li><a href="Dashboard.html">Dashboard</a></li>
+        </ul>
+    </header>
+
+    <!-- Formularios de Inicio de Sesión y Registro -->
+    <main class="contenedor-seccion">
+        <div class="titulo-seccion">
+            <h2>Acceso de Usuarios</h2>
+            <p>Inicia sesión en tu cuenta o regístrate para gestionar tus pedidos artesanales</p>
+        </div>
+
+        <div class="contenedor-doble">
+            <!-- Formulario de Login -->
+            <form id="form-login" class="formulario" onsubmit="iniciarSesion(event)">
+                <h3>Iniciar Sesión</h3>
+
+                <div class="grupo-campo">
+                    <label for="login-correo">Correo electrónico</label>
+                    <input type="email" id="login-correo" placeholder="usuario@correo.com" required>
+                </div>
+
+                <div class="grupo-campo">
+                    <label for="login-password">Contraseña</label>
+                    <input type="password" id="login-password" placeholder="Ingresa tu contraseña" required>
+                </div>
+
+                <button type="submit" class="boton-principal">Ingresar</button>
+                <p id="estado-login" class="mensaje-estado"></p>
+            </form>
+
+            <!-- Formulario de Registro -->
+            <form id="form-registro" class="formulario" onsubmit="registrarUsuario(event)">
+                <h3>Crear Cuenta Nueva</h3>
+
+                <div class="grupo-campo">
+                    <label for="registro-nombre">Nombre completo</label>
+                    <input type="text" id="registro-nombre" placeholder="Ej: Mateo Gómez" required>
+                </div>
+
+                <div class="grupo-campo">
+                    <label for="registro-correo">Correo electrónico</label>
+                    <input type="email" id="registro-correo" placeholder="mateo@correo.com" required>
+                </div>
+
+                <div class="grupo-campo">
+                    <label for="registro-password">Contraseña</label>
+                    <input type="password" id="registro-password" placeholder="Crea una contraseña" required>
+                </div>
+
+                <button type="submit" class="boton-principal">Registrarse</button>
+                <p id="estado-registro" class="mensaje-estado"></p>
+            </form>
+        </div>
+    </main>
+
+    <!-- Pie de página -->
+    <footer class="pie-pagina">
+        <p>&copy; 2026 Bosque Ghibli - Emprendimiento de Arte y Productos Artesanales. Proyecto Universitario de Desarrollo Web.</p>
+    </footer>
+
+    <script src="assets/js/main.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Taller | Bosque Ghibli</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+    <!-- Barra de navegación superior fija -->
+    <header class="barra-navegacion">
+        <a href="index.html" class="logo-tienda">
+            Bosque Ghibli
+            <span>Arte &amp; Hecho a Mano</span>
+        </a>
+        <ul class="enlaces-menu">
+            <li><a href="index.html">Inicio</a></li>
+            <li><a href="Catalogo.html">Catálogo</a></li>
+            <li><a href="Carrito.html">Carrito <span id="contador-carrito" class="contador-carrito">0</span></a></li>
+            <li><a href="Contacto.html">Contacto</a></li>
+            <li><a href="Login.html">Login</a></li>
+            <li><a href="Dashboard.html" class="activo">Dashboard</a></li>
+        </ul>
+    </header>
+
+    <!-- Panel sencillo para agregar/ver productos artesanales y mensajes -->
+    <main class="contenedor-seccion">
+        <div class="titulo-seccion">
+            <h2>Panel de Administración (Dashboard)</h2>
+            <p>Agrega nuevos productos artesanales al catálogo o revisa los mensajes enviados por los clientes</p>
+        </div>
+
+        <div class="contenedor-doble">
+            <!-- Formulario para publicar un nuevo producto artesanal -->
+            <form id="form-producto" class="formulario" onsubmit="guardarProductoDashboard(event)">
+                <h3>Agregar Producto Artesanal</h3>
+
+                <div class="grupo-campo">
+                    <label for="prod-nombre">Nombre del producto</label>
+                    <input type="text" id="prod-nombre" placeholder="Ej: Cuaderno Bordado Totoro" required>
+                </div>
+
+                <div class="grupo-campo">
+                    <label for="prod-personaje">Personaje de Ghibli</label>
+                    <select id="prod-personaje" required>
+                        <option value="Totoro">Totoro</option>
+                        <option value="Calcifer">Calcifer</option>
+                        <option value="Sin Cara">Sin Cara</option>
+                        <option value="Mononoke">Mononoke</option>
+                        <option value="Ponyo">Ponyo</option>
+                        <option value="Kiki">Kiki</option>
+                    </select>
+                </div>
+
+                <div class="grupo-campo">
+                    <label for="prod-precio">Precio (COP)</label>
+                    <input type="number" id="prod-precio" placeholder="Ej: 55000" required>
+                </div>
+
+                <div class="grupo-campo">
+                    <label for="prod-imagen">Ruta de la imagen local</label>
+                    <input type="text" id="prod-imagen" value="assets/img/Totoro.jpg" required>
+                </div>
+
+                <div class="grupo-campo">
+                    <label for="prod-descripcion">Descripción artesanal</label>
+                    <textarea id="prod-descripcion" placeholder="Describe cómo fue elaborado este producto..." required></textarea>
+                </div>
+
+                <button type="submit" class="boton-principal">Guardar Producto</button>
+                <p id="estado-dashboard" class="mensaje-estado"></p>
+            </form>
+
+            <!-- Listado de productos actuales en base de datos -->
+            <div class="contenedor-carrito" style="flex: 1; min-width: 320px;">
+                <h3 style="margin-bottom: 15px; text-transform: uppercase; font-size: 16px;">Productos en Base de Datos</h3>
+                <table class="tabla-carrito">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Personaje</th>
+                            <th>Precio</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabla-productos-dashboard">
+                        <!-- Cargado desde main.js -->
+                    </tbody>
+                </table>
+
+                <h3 style="margin: 25px 0 15px 0; text-transform: uppercase; font-size: 16px;">Mensajes de Contacto Recibidos</h3>
+                <table class="tabla-carrito">
+                    <thead>
+                        <tr>
+                            <th>Cliente</th>
+                            <th>Correo</th>
+                            <th>Mensaje</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabla-mensajes-dashboard">
+                        <!-- Cargado desde main.js -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Pie de página -->
+    <footer class="pie-pagina">
+        <p>&copy; 2026 Bosque Ghibli - Emprendimiento de Arte y Productos Artesanales. Proyecto Universitario de Desarrollo Web.</p>
+    </footer>
+
+    <script src="assets/js/main.js"></script>
+</body>
+</html>
+

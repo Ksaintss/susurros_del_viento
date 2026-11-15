@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo Artesanal | Bosque Ghibli</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+    <!-- Barra de navegación superior fija -->
+    <header class="barra-navegacion">
+        <a href="index.html" class="logo-tienda">
+            Bosque Ghibli
+            <span>Arte &amp; Hecho a Mano</span>
+        </a>
+        <ul class="enlaces-menu">
+            <li><a href="index.html">Inicio</a></li>
+            <li><a href="Catalogo.html" class="activo">Catálogo</a></li>
+            <li><a href="Carrito.html">Carrito <span id="contador-carrito" class="contador-carrito">0</span></a></li>
+            <li><a href="Contacto.html">Contacto</a></li>
+            <li><a href="Login.html">Login</a></li>
+            <li><a href="Dashboard.html">Dashboard</a></li>
+        </ul>
+    </header>
+
+    <!-- Catálogo Completo de Productos -->
+    <main class="contenedor-seccion">
+        <div class="titulo-seccion">
+            <h2>Catálogo de Productos Artesanales</h2>
+            <p>Explora todas nuestras creaciones hechas a mano inspiradas en tus personajes favoritos</p>
+        </div>
+
+        <!-- Barra sencilla de filtros por personaje -->
+        <div class="barra-filtros">
+            <button class="boton-filtro activo" onclick="filtrarPorPersonaje('Todos', this)">Todos</button>
+            <button class="boton-filtro" onclick="filtrarPorPersonaje('Totoro', this)">Totoro</button>
+            <button class="boton-filtro" onclick="filtrarPorPersonaje('Calcifer', this)">Calcifer</button>
+            <button class="boton-filtro" onclick="filtrarPorPersonaje('Sin Cara', this)">Sin Cara</button>
+            <button class="boton-filtro" onclick="filtrarPorPersonaje('Mononoke', this)">Mononoke</button>
+            <button class="boton-filtro" onclick="filtrarPorPersonaje('Ponyo', this)">Ponyo</button>
+            <button class="boton-filtro" onclick="filtrarPorPersonaje('Kiki', this)">Kiki</button>
+        </div>
+
+        <!-- Cuadrícula donde main.js dibuja todos los productos -->
+        <div id="contenedor-catalogo" class="contenedor-productos"></div>
+    </main>
+
+    <!-- Pie de página -->
+    <footer class="pie-pagina">
+        <p>&copy; 2026 Bosque Ghibli - Emprendimiento de Arte y Productos Artesanales. Proyecto Universitario de Desarrollo Web.</p>
+    </footer>
+
+    <script src="assets/js/main.js"></script>
+</body>
+</html>
+

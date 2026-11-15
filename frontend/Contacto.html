@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contacto | Bosque Ghibli</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+    <!-- Barra de navegación superior fija -->
+    <header class="barra-navegacion">
+        <a href="index.html" class="logo-tienda">
+            Bosque Ghibli
+            <span>Arte &amp; Hecho a Mano</span>
+        </a>
+        <ul class="enlaces-menu">
+            <li><a href="index.html">Inicio</a></li>
+            <li><a href="Catalogo.html">Catálogo</a></li>
+            <li><a href="Carrito.html">Carrito <span id="contador-carrito" class="contador-carrito">0</span></a></li>
+            <li><a href="Contacto.html" class="activo">Contacto</a></li>
+            <li><a href="Login.html">Login</a></li>
+            <li><a href="Dashboard.html">Dashboard</a></li>
+        </ul>
+    </header>
+
+    <!-- Formulario de Contacto conectado al Backend -->
+    <main class="contenedor-seccion">
+        <div class="titulo-seccion">
+            <h2>Contáctanos</h2>
+            <p>¿Quieres un pedido personalizado de tu personaje favorito de Studio Ghibli? Escríbenos</p>
+        </div>
+
+        <form id="form-contacto" class="formulario" onsubmit="enviarFormularioContacto(event)">
+            <h3>Enviar Mensaje al Taller</h3>
+
+            <div class="grupo-campo">
+                <label for="contacto-nombre">Nombre completo</label>
+                <input type="text" id="contacto-nombre" placeholder="Ej: Sofía Ramírez" required>
+            </div>
+
+            <div class="grupo-campo">
+                <label for="contacto-correo">Correo electrónico</label>
+                <input type="email" id="contacto-correo" placeholder="sofia@correo.com" required>
+            </div>
+
+            <div class="grupo-campo">
+                <label for="contacto-mensaje">Mensaje o descripción de tu pedido</label>
+                <textarea id="contacto-mensaje" placeholder="Cuéntanos qué personaje o artesanía te gustaría..." required></textarea>
+            </div>
+
+            <button type="submit" class="boton-principal">Enviar Mensaje</button>
+            <p id="estado-contacto" class="mensaje-estado"></p>
+        </form>
+    </main>
+
+    <!-- Pie de página -->
+    <footer class="pie-pagina">
+        <p>&copy; 2026 Bosque Ghibli - Emprendimiento de Arte y Productos Artesanales. Proyecto Universitario de Desarrollo Web.</p>
+    </footer>
+
+    <script src="assets/js/main.js"></script>
+</body>
+</html>
+

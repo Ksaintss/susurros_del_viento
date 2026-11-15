@@ -1,0 +1,443 @@
+// =======================================================
+// ARCHIVO PRINCIPAL DE JAVASCRIPT (main.js)
+// =======================================================
+
+const URL_API = 'http://localhost:3000/api';
+
+// Lista de productos base por si el servidor aún no está encendido
+const productosBase = [
+    {
+        _id: '1',
+        nombre: 'Amigurumi Totoro Guardián del Bosque',
+        descripcion: 'Muñeco tejido a mano en crochet con hilo de algodón hipoalergénico y hojita bordada.',
+        precio: 65000,
+        imagen: 'assets/img/Totoro.jpg',
+        personaje: 'Totoro'
+    },
+    {
+        _id: '2',
+        nombre: 'Lámpara Artesanal Calcifer en Resina',
+        descripcion: 'Pequeña lámpara de escritorio moldeada y pintada a mano con luz cálida tipo fogata.',
+        precio: 85000,
+        imagen: 'assets/img/Calcifer.jpg',
+        personaje: 'Calcifer'
+    },
+    {
+        _id: '3',
+        nombre: 'Taza de Cerámica Sin Cara (Kaonashi)',
+        descripcion: 'Taza torneada en arcilla y esmaltada a mano en horno artesanal, capacidad de 350 ml.',
+        precio: 48000,
+        imagen: 'assets/img/SinCara.jpg',
+        personaje: 'Sin Cara'
+    },
+    {
+        _id: '4',
+        nombre: 'Máscara Decorativa Princesa Mononoke',
+        descripcion: 'Escultura de pared tallada en madera liviana y pintada con acrílicos mates.',
+        precio: 92000,
+        imagen: 'assets/img/Mononoke.jpg',
+        personaje: 'Mononoke'
+    },
+    {
+        _id: '5',
+        nombre: 'Terrario de Cristal Ponyo en el Mar',
+        descripcion: 'Mini escenario hecho a mano con figuras en porcelana fría y piedras naturales.',
+        precio: 58000,
+        imagen: 'assets/img/Ponyo.jpg',
+        personaje: 'Ponyo'
+    },
+    {
+        _id: '6',
+        nombre: 'Tote Bag Bordada Jiji y Kiki',
+        descripcion: 'Bolso de lienzo crudo 100% algodón con bordado artesanal hecho puntada a puntada.',
+        precio: 42000,
+        imagen: 'assets/img/Kiki.jpg',
+        personaje: 'Kiki'
+    }
+];
+
+// Variable global para guardar los productos cargados en el catálogo
+let listaProductos = [];
+
+// =======================================================
+// FUNCIONES DEL CARRITO DE COMPRAS (CON LOCALSTORAGE)
+// =======================================================
+
+function obtenerCarrito() {
+    const carritoGuardado = localStorage.getItem('carritoGhibli');
+    if (carritoGuardado) {
+        return JSON.parse(carritoGuardado);
+    }
+    return [];
+}
+
+function guardarCarrito(carrito) {
+    localStorage.setItem('carritoGhibli', JSON.stringify(carrito));
+    actualizarContadorMenu();
+}
+
+function actualizarContadorMenu() {
+    const elementoContador = document.getElementById('contador-carrito');
+    if (elementoContador) {
+        const carrito = obtenerCarrito();
+        elementoContador.innerHTML = carrito.length;
+    }
+}
+
+function agregarAlCarrito(nombre, precio, personaje) {
+    const carrito = obtenerCarrito();
+    carrito.push({
+        nombre: nombre,
+        precio: Number(precio),
+        personaje: personaje
+    });
+    guardarCarrito(carrito);
+    alert('Producto agregado al carrito: ' + nombre);
+}
+
+function mostrarCarrito() {
+    const tablaCuerpo = document.getElementById('cuerpo-tabla-carrito');
+    const textoTotal = document.getElementById('total-carrito');
+
+    if (!tablaCuerpo || !textoTotal) {
+        return;
+    }
+
+    const carrito = obtenerCarrito();
+    tablaCuerpo.innerHTML = '';
+    let sumaTotal = 0;
+
+    if (carrito.length === 0) {
+        tablaCuerpo.innerHTML = '<tr><td colspan="4">Tu carrito está vacío por ahora. ¡Explora el catálogo!</td></tr>';
+        textoTotal.innerHTML = '$0 COP';
+        return;
+    }
+
+    for (let i = 0; i < carrito.length; i++) {
+        const item = carrito[i];
+        sumaTotal = sumaTotal + item.precio;
+
+        tablaCuerpo.innerHTML += `
+            <tr>
+                <td>${item.nombre}</td>
+                <td>${item.personaje}</td>
+                <td>$${item.precio.toLocaleString('es-CO')} COP</td>
+                <td>
+                    <button class="boton-eliminar" onclick="eliminarDelCarrito(${i})">Quitar</button>
+                </td>
+            </tr>
+        `;
+    }
+
+    textoTotal.innerHTML = '$' + sumaTotal.toLocaleString('es-CO') + ' COP';
+}
+
+function eliminarDelCarrito(indice) {
+    const carrito = obtenerCarrito();
+    carrito.splice(indice, 1);
+    guardarCarrito(carrito);
+    mostrarCarrito();
+}
+
+function vaciarCarrito() {
+    localStorage.removeItem('carritoGhibli');
+    actualizarContadorMenu();
+    mostrarCarrito();
+}
+
+function finalizarCompra() {
+    const carrito = obtenerCarrito();
+    if (carrito.length === 0) {
+        alert('Agrega al menos un producto artesanal antes de realizar la compra.');
+        return;
+    }
+
+    alert('¡Muchas gracias por apoyar nuestro emprendimiento artesanal! Tu pedido está en preparación.');
+    vaciarCarrito();
+}
+
+// =======================================================
+// FUNCIONES DE PRODUCTOS (CATÁLOGO E INICIO)
+// =======================================================
+
+function cargarProductosCatalogo() {
+    const contenedor = document.getElementById('contenedor-catalogo');
+    if (!contenedor) {
+        return;
+    }
+
+    fetch(URL_API + '/productos')
+        .then(function (respuesta) {
+            return respuesta.json();
+        })
+        .then(function (datos) {
+            if (Array.isArray(datos) && datos.length > 0) {
+                listaProductos = datos;
+            } else {
+                listaProductos = productosBase;
+            }
+            dibujarTarjetasProductos(listaProductos, 'contenedor-catalogo');
+        })
+        .catch(function () {
+            // Si el backend no está prendido, mostramos los productos base
+            listaProductos = productosBase;
+            dibujarTarjetasProductos(listaProductos, 'contenedor-catalogo');
+        });
+}
+
+function dibujarTarjetasProductos(productos, idContenedor) {
+    const contenedor = document.getElementById(idContenedor);
+    if (!contenedor) {
+        return;
+    }
+
+    contenedor.innerHTML = '';
+
+    for (let i = 0; i < productos.length; i++) {
+        const prod = productos[i];
+        contenedor.innerHTML += `
+            <div class="tarjeta-producto">
+                <img src="${prod.imagen}" alt="${prod.nombre}">
+                <div class="info-producto">
+                    <div>
+                        <p class="etiqueta-personaje">${prod.personaje}</p>
+                        <h3>${prod.nombre}</h3>
+                        <p>${prod.descripcion}</p>
+                    </div>
+                    <div>
+                        <p class="precio-producto">$${Number(prod.precio).toLocaleString('es-CO')} COP</p>
+                        <button class="boton-agregar" onclick="agregarAlCarrito('${prod.nombre}', ${prod.precio}, '${prod.personaje}')">
+                            Agregar al carrito
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+}
+
+function filtrarPorPersonaje(personaje, botonPresionado) {
+    const botones = document.getElementsByClassName('boton-filtro');
+    for (let i = 0; i < botones.length; i++) {
+        botones[i].classList.remove('activo');
+    }
+    if (botonPresionado) {
+        botonPresionado.classList.add('activo');
+    }
+
+    if (personaje === 'Todos') {
+        dibujarTarjetasProductos(listaProductos, 'contenedor-catalogo');
+        return;
+    }
+
+    const filtrados = [];
+    for (let i = 0; i < listaProductos.length; i++) {
+        if (listaProductos[i].personaje.toLowerCase() === personaje.toLowerCase()) {
+            filtrados.push(listaProductos[i]);
+        }
+    }
+    dibujarTarjetasProductos(filtrados, 'contenedor-catalogo');
+}
+
+// =======================================================
+// FUNCIONES DE CONTACTO (Contacto.html)
+// =======================================================
+
+function enviarFormularioContacto(evento) {
+    evento.preventDefault();
+
+    const nombre = document.getElementById('contacto-nombre').value;
+    const correo = document.getElementById('contacto-correo').value;
+    const mensaje = document.getElementById('contacto-mensaje').value;
+    const estado = document.getElementById('estado-contacto');
+
+    fetch(URL_API + '/contacto', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nombre: nombre, correo: correo, mensaje: mensaje })
+    })
+        .then(function (respuesta) {
+            return respuesta.json();
+        })
+        .then(function (datos) {
+            estado.innerHTML = datos.mensaje;
+            document.getElementById('form-contacto').reset();
+        })
+        .catch(function () {
+            estado.innerHTML = 'No se pudo conectar con el servidor (verifica que node server.js esté corriendo).';
+        });
+}
+
+// =======================================================
+// FUNCIONES DE LOGIN Y REGISTRO (Login.html)
+// =======================================================
+
+function iniciarSesion(evento) {
+    evento.preventDefault();
+
+    const correo = document.getElementById('login-correo').value;
+    const password = document.getElementById('login-password').value;
+    const estado = document.getElementById('estado-login');
+
+    fetch(URL_API + '/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ correo: correo, password: password })
+    })
+        .then(function (respuesta) {
+            return respuesta.json().then(function (datos) {
+                return { ok: respuesta.ok, datos: datos };
+            });
+        })
+        .then(function (resultado) {
+            estado.innerHTML = resultado.datos.mensaje;
+            if (resultado.ok) {
+                localStorage.setItem('usuarioGhibli', JSON.stringify(resultado.datos.usuario));
+                setTimeout(function () {
+                    window.location.href = 'Dashboard.html';
+                }, 1000);
+            }
+        })
+        .catch(function () {
+            estado.innerHTML = 'Error al conectar con el servidor.';
+        });
+}
+
+function registrarUsuario(evento) {
+    evento.preventDefault();
+
+    const nombre = document.getElementById('registro-nombre').value;
+    const correo = document.getElementById('registro-correo').value;
+    const password = document.getElementById('registro-password').value;
+    const estado = document.getElementById('estado-registro');
+
+    fetch(URL_API + '/registro', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nombre: nombre, correo: correo, password: password })
+    })
+        .then(function (respuesta) {
+            return respuesta.json();
+        })
+        .then(function (datos) {
+            estado.innerHTML = datos.mensaje;
+            document.getElementById('form-registro').reset();
+        })
+        .catch(function () {
+            estado.innerHTML = 'Error al conectar con el servidor.';
+        });
+}
+
+// =======================================================
+// FUNCIONES DEL PANEL DASHBOARD (Dashboard.html)
+// =======================================================
+
+function guardarProductoDashboard(evento) {
+    evento.preventDefault();
+
+    const nombre = document.getElementById('prod-nombre').value;
+    const personaje = document.getElementById('prod-personaje').value;
+    const precio = document.getElementById('prod-precio').value;
+    const imagen = document.getElementById('prod-imagen').value;
+    const descripcion = document.getElementById('prod-descripcion').value;
+    const estado = document.getElementById('estado-dashboard');
+
+    fetch(URL_API + '/productos', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            nombre: nombre,
+            personaje: personaje,
+            precio: Number(precio),
+            imagen: imagen,
+            descripcion: descripcion
+        })
+    })
+        .then(function (respuesta) {
+            return respuesta.json();
+        })
+        .then(function (datos) {
+            estado.innerHTML = datos.mensaje;
+            document.getElementById('form-producto').reset();
+            cargarDatosDashboard();
+        })
+        .catch(function () {
+            estado.innerHTML = 'Error: verifica que el backend esté encendido en el puerto 3000.';
+        });
+}
+
+function cargarDatosDashboard() {
+    const tablaProductos = document.getElementById('tabla-productos-dashboard');
+    const tablaMensajes = document.getElementById('tabla-mensajes-dashboard');
+
+    if (tablaProductos) {
+        fetch(URL_API + '/productos')
+            .then(function (res) { return res.json(); })
+            .then(function (productos) {
+                tablaProductos.innerHTML = '';
+                for (let i = 0; i < productos.length; i++) {
+                    const p = productos[i];
+                    tablaProductos.innerHTML += `
+                        <tr>
+                            <td>${p.nombre}</td>
+                            <td>${p.personaje}</td>
+                            <td>$${Number(p.precio).toLocaleString('es-CO')} COP</td>
+                            <td>
+                                <button class="boton-eliminar" onclick="eliminarProductoBackend('${p._id}')">Eliminar</button>
+                            </td>
+                        </tr>
+                    `;
+                }
+            })
+            .catch(function () {
+                tablaProductos.innerHTML = '<tr><td colspan="4">Enciende el servidor backend para administrar productos en MongoDB.</td></tr>';
+            });
+    }
+
+    if (tablaMensajes) {
+        fetch(URL_API + '/contacto')
+            .then(function (res) { return res.json(); })
+            .then(function (mensajes) {
+                tablaMensajes.innerHTML = '';
+                if (mensajes.length === 0) {
+                    tablaMensajes.innerHTML = '<tr><td colspan="3">Aún no hay mensajes de contacto.</td></tr>';
+                    return;
+                }
+                for (let i = 0; i < mensajes.length; i++) {
+                    const m = mensajes[i];
+                    tablaMensajes.innerHTML += `
+                        <tr>
+                            <td>${m.nombre}</td>
+                            <td>${m.correo}</td>
+                            <td>${m.mensaje}</td>
+                        </tr>
+                    `;
+                }
+            })
+            .catch(function () {
+                tablaMensajes.innerHTML = '<tr><td colspan="3">Enciende el servidor backend para ver los mensajes recibidos.</td></tr>';
+            });
+    }
+}
+
+function eliminarProductoBackend(id) {
+    fetch(URL_API + '/productos/' + id, {
+        method: 'DELETE'
+    })
+        .then(function (res) { return res.json(); })
+        .then(function () {
+            cargarDatosDashboard();
+        });
+}
+
+// =======================================================
+// INICIALIZACIÓN AL CARGAR CUALQUIER PÁGINA
+// =======================================================
+
+window.onload = function () {
+    actualizarContadorMenu();
+    cargarProductosCatalogo();
+    mostrarCarrito();
+    cargarDatosDashboard();
+};
+
