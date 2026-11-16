@@ -14,7 +14,7 @@ const Contacto = require('./models/Contacto');
 
 const app = express();
 
-const PUERTO = process.env.PUERTO || 3000;
+const PUERTO = process.env.PUERTO || 10000;
 const MONGO_URI = process.env.MONGO_URI;
 
 // Configuraciones de Express
