@@ -19,34 +19,24 @@ Proyecto-Ghibli/
 │       ├── Producto.js
 │       └── Contacto.js
 └── frontend/
-    ├── index.html
-    ├── Conocenos.html
-    ├── Catalogo.html
-    ├── Carrito.html
-    ├── Contacto.html
-    ├── Login.html
-    ├── Dashboard.html
+    ├── index.html              (carga React y arranca la app)
     └── assets/
-        ├── css/
-        │   └── style.css
-        ├── js/
-        │   └── main.js
-        └── img/
-            ├── B1.jpg
-            ├── B2.jpg
-            ├── Totoro.jpg
-            ├── Calcifer.jpg
-            ├── SinCara.jpg
-            ├── Mononoke.jpg
-            ├── Ponyo.jpg
-            └── Kiki.jpg
+        ├── css/style.css
+        ├── img/                (imágenes del sitio)
+        └── js/react/
+            ├── datos.js        (URL del backend y productos base)
+            ├── utilidades.js   (formato de precios, rutas por hash)
+            ├── contextos.jsx   (carrito y sesión)
+            ├── componentes.jsx (Navbar, Footer, TarjetaProducto)
+            ├── paginas.jsx     (Inicio, Conócenos, Catálogo, Carrito, Contacto, Login, Dashboard)
+            └── app.jsx         (rutas y arranque; debe cargarse al final)
 ```
 
 ---
 
 ## Tecnologías Utilizadas
 
-- **Frontend:** HTML5, CSS3 puro (Flexbox y Grid básico) y JavaScript Vanilla (`fetch` y `localStorage`).
+- **Frontend:** React 18 cargado por CDN (sin Vite ni compilación, JSX con Babel en el navegador), CSS3 puro, `fetch` y `localStorage`.
 - **Backend:** Node.js con Express.
 - **Base de Datos:** MongoDB conectada mediante Mongoose.
 
@@ -74,8 +64,10 @@ Proyecto-Ghibli/
    El servidor quedará corriendo en `http://localhost:3000`.
 
 ### 3. Abrir el Frontend
-- Puedes abrir el archivo `frontend/index.html` directamente en el navegador o usando la extensión **Live Server** de Visual Studio Code.
-- Nota: Si el backend aún no tiene productos guardados en MongoDB, el catálogo muestra los productos artesanales base y también carga automáticamente cualquier producto nuevo que agregues desde `Dashboard.html`.
+- Abre la carpeta `frontend` con la extensión **Live Server** de Visual Studio Code y ejecuta `index.html` (necesita internet para descargar React desde el CDN).
+- No lo abras con doble clic: los archivos `.jsx` se cargan con peticiones del navegador y necesitan un servidor local.
+- Las páginas se navegan con `#`: `index.html#/catalogo`, `#/carrito`, `#/login`, etc.
+- Nota: Si el backend aún no tiene productos guardados en MongoDB, el catálogo muestra los productos artesanales base y también carga automáticamente cualquier producto nuevo que agregues desde el Dashboard.
 
 ---
 

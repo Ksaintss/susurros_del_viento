@@ -4,141 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Susurros del viento | Arte y Productos Artesanales</title>
+    <link rel="icon" href="assets/img/logooo.ico">
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
+    <div id="root"></div>
 
-    <!-- Barra de navegación superior fija -->
-    <header class="barra-navegacion">
-        <a href="index.html" class="logo-tienda">
-            Susurros del Viento
-            <span>Arte &amp; Hecho a Mano</span>
-        </a>
-        <ul class="enlaces-menu">
-            <li><a href="index.html" class="activo">Inicio</a></li>
-            <li><a href="./assets/pages/Conocenos.html">Conócenos</a></li>
-            <li><a href="./assets/pages/Catalogo.html">Catálogo</a></li>
-            <li><a href="./assets/pages/Carrito.html">Carrito <span id="contador-carrito" class="contador-carrito">0</span></a></li>
-            <li><a href="./assets/pages/Contacto.html">Contacto</a></li>
-            <li><a href="./assets/pages/Login.html">Login</a></li>
-            <li><a href="./assets/pages/Dashboard.html">Dashboard</a></li>
-        </ul>
-    </header>
+    <!-- React y Babel desde CDN (no hay que instalar ni compilar nada) -->
+    <script src="https://cdn.jsdelivr.net/npm/react@18.3.1/umd/react.production.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.26.4/babel.min.js"></script>
 
-    <!-- Banner Principal estilo tienda Gef -->
-    <section class="banner-principal">
-        <div class="banner-texto">
-            <span class="banner-etiqueta">Nueva Colección Hecha a Mano</span>
-            <h1>Arte propio inspirado en el mundo de Studio Ghibli</h1>
-            <p>Piezas únicas tejidas en crochet, cerámica esmaltada, madera tallada y resina creadas paso a paso en nuestro taller.</p>
-            <a href="assets/pages/Catalogo.html" class="boton-principal">Ver colección completa</a>
-        </div>
-        <div class="banner-imagen">
-            <img src="assets/img/taller.png" alt="Colección Artesanal Studio Ghibli">
-        </div>
-    </section>
+    <!-- Datos y utilidades (JavaScript normal) -->
+    <script src="assets/js/react/datos.js"></script>
+    <script src="assets/js/react/utilidades.js"></script>
 
-    <!-- Sección de Productos Destacados -->
-    <section class="contenedor-seccion">
-        <div class="titulo-seccion">
-            <h2>Productos Destacados</h2>
-            <p>Nuestras piezas artesanales más pedidas por los fans de Totoro, Calcifer y Chihiro</p>
-        </div>
-
-        <div class="contenedor-productos">
-            <!-- Producto Destacado 1 -->
-            <div class="tarjeta-producto">
-                <img src="assets/img/totoro.png" alt="Amigurumi Totoro Guardián del Bosque">
-                <div class="info-producto">
-                    <div>
-                        <p class="etiqueta-personaje">Totoro</p>
-                        <h3>Amigurumi Totoro Guardián del Bosque</h3>
-                        <p>Muñeco tejido a mano en crochet con hilo de algodón hipoalergénico y hojita bordada.</p>
-                    </div>
-                    <div>
-                        <p class="precio-producto">$65.000 COP</p>
-                        <button class="boton-agregar" onclick="agregarAlCarrito('Amigurumi Totoro Guardián del Bosque', 65000, 'Totoro', 'assets/img/totoro.png')">
-                            Agregar al carrito
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Producto Destacado 2 -->
-            <div class="tarjeta-producto">
-                <img src="assets/img/calcifer.png" alt="Lámpara Artesanal Calcifer en Resina">
-                <div class="info-producto">
-                    <div>
-                        <p class="etiqueta-personaje">Calcifer</p>
-                        <h3>Lámpara Artesanal Calcifer en Resina</h3>
-                        <p>Pequeña lámpara de escritorio moldeada y pintada a mano con luz cálida tipo fogata.</p>
-                    </div>
-                    <div>
-                        <p class="precio-producto">$85.000 COP</p>
-                        <button class="boton-agregar" onclick="agregarAlCarrito('Lámpara Artesanal Calcifer en Resina', 85000, 'Calcifer', 'assets/img/calcifer.png')">
-                            Agregar al carrito
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Producto Destacado 3 -->
-            <div class="tarjeta-producto">
-                <img src="assets/img/tazasincara.png" alt="Taza de Cerámica Sin Cara (Kaonashi)">
-                <div class="info-producto">
-                    <div>
-                        <p class="etiqueta-personaje">Sin Cara</p>
-                        <h3>Taza de Cerámica Sin Cara (Kaonashi)</h3>
-                        <p>Taza torneada en arcilla y esmaltada a mano en horno artesanal, capacidad de 350 ml.</p>
-                    </div>
-                    <div>
-                        <p class="precio-producto">$48.000 COP</p>
-                        <button class="boton-agregar" onclick="agregarAlCarrito('Taza de Cerámica Sin Cara (Kaonashi)', 48000, 'Sin Cara', 'assets/img/tazasincara.png')">
-                            Agregar al carrito
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Producto Destacado 4 -->
-            <div class="tarjeta-producto">
-                <img src="assets/img/mascaramononoke.png" alt="Máscara Decorativa Princesa Mononoke">
-                <div class="info-producto">
-                    <div>
-                        <p class="etiqueta-personaje">Mononoke</p>
-                        <h3>Máscara Decorativa Princesa Mononoke</h3>
-                        <p>Escultura de pared tallada en madera liviana y pintada con acrílicos mates.</p>
-                    </div>
-                    <div>
-                        <p class="precio-producto">$92.000 COP</p>
-                        <button class="boton-agregar" onclick="agregarAlCarrito('Máscara Decorativa Princesa Mononoke', 92000, 'Mononoke', 'assets/img/mascaramononoke.png')">
-                            Agregar al carrito
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Segundo Banner promocional hacia Conócenos (Misión y Visión) -->
-    <section class="banner-secundario">
-        <div class="banner-imagen">
-            <img src="assets/img/taller3.jpg" alt="Taller Artesanal Ghibli">
-        </div>
-        <div class="banner-texto">
-            <span class="banner-etiqueta">100% Hecho a Mano</span>
-            <h1>Cada pieza cuenta una historia</h1>
-            <p>No trabajamos con productos industriales en serie. Conoce la historia de nuestro taller artesanal, nuestra Misión y nuestra Visión.</p>
-            <a href="assets/pages/Conocenos.html" class="boton-principal">Conoce nuestra Misión y Visión</a>
-        </div>
-    </section>
-
-    <!-- Pie de página -->
-    <footer class="pie-pagina">
-        <p>&copy; 2026 Susurros del viento - Emprendimiento de Arte y Productos Artesanales. Jovenes Creativos.</p>
-    </footer>
-
-    <script src="assets/js/main.js"></script>
+    <!-- Componentes (JSX). El ORDEN importa: app.jsx va de último -->
+    <script type="text/babel" data-presets="react" src="assets/js/react/contextos.jsx"></script>
+    <script type="text/babel" data-presets="react" src="assets/js/react/componentes.jsx"></script>
+    <script type="text/babel" data-presets="react" src="assets/js/react/paginas.jsx"></script>
+    <script type="text/babel" data-presets="react" src="assets/js/react/app.jsx"></script>
 </body>
 </html>
-
