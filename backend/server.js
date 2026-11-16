@@ -1,33 +1,71 @@
+
+require('dotenv').config();
+
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
-// Importamos los 3 modelos de nuestra base de datos
+// Modelos de MongoDB
 const Usuario = require('./models/Usuario');
 const Producto = require('./models/Producto');
 const Contacto = require('./models/Contacto');
 
 const app = express();
-const PUERTO = 3000;
 
-// Configuraciones básicas de Express
+const PUERTO = process.env.PUERTO || 3000;
+const MONGO_URI = process.env.MONGO_URI;
+
+// Configuraciones de Express
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
 
-// Conexión directa a MongoDB local
-mongoose.connect('mongodb://127.0.0.1:27017/tienda_ghibli')
-    .then(async () => {
-        console.log('Conectado correctamente a MongoDB (tienda_ghibli)');
-        await cargarProductosIniciales();
-    })
-    .catch((error) => {
-        console.log('Error al conectar a MongoDB:', error.message);
+// ==========================================
+// AUTENTICACIÓN Y PERMISOS
+// ==========================================
+
+function verificarToken(req, res, next) {
+    const encabezado = req.headers['authorization'];
+
+    const token = encabezado && encabezado.split(' ')[1];
+
+    if (!token) {
+        return res.status(401).json({
+            mensaje: 'Debes iniciar sesión para continuar.'
+        });
+    }
+
+    jwt.verify(token, process.env.JWT_SECRETO, (error, usuario) => {
+        if (error) {
+            return res.status(403).json({
+                mensaje: 'Tu sesión no es válida o ha expirado.'
+            });
+        }
+
+        req.usuario = usuario;
+        next();
     });
+}
 
-// Función sencilla para crear productos de ejemplo si la base de datos está vacía
+function verificarAdmin(req, res, next) {
+    if (req.usuario.rol !== 'admin') {
+        return res.status(403).json({
+            mensaje: 'No tienes permisos de administrador.'
+        });
+    }
+
+    next();
+}
+
+// ==========================================
+// PRODUCTOS INICIALES
+// ==========================================
+
 async function cargarProductosIniciales() {
     try {
         const cantidad = await Producto.countDocuments();
+
         if (cantidad === 0) {
             await Producto.insertMany([
                 {
@@ -73,108 +111,242 @@ async function cargarProductosIniciales() {
                     personaje: 'Kiki'
                 }
             ]);
-            console.log('Productos iniciales de Ghibli insertados en la base de datos.');
+
+            console.log('Productos iniciales insertados correctamente.');
+        } else {
+            console.log('Los productos ya existen. No se insertaron duplicados.');
         }
     } catch (error) {
-        console.log('No se pudieron insertar productos iniciales:', error.message);
+        console.error('Error al cargar productos:', error.message);
+        throw error;
     }
 }
 
 // ==========================================
-// RUTAS DE USUARIOS (REGISTRO Y LOGIN)
+// RUTAS DE USUARIOS
 // ==========================================
 
-// Registrar un nuevo usuario
+// Registrar usuario
 app.post('/api/registro', async (req, res) => {
     try {
         const { nombre, correo, password } = req.body;
 
-        const existeUsuario = await Usuario.findOne({ correo: correo });
-        if (existeUsuario) {
-            return res.status(400).json({ mensaje: 'Este correo ya está registrado.' });
+        if (!nombre || !correo || !password) {
+            return res.status(400).json({
+                mensaje: 'Todos los campos son obligatorios.'
+            });
         }
 
-        const nuevoUsuario = new Usuario({ nombre, correo, password });
+        const correoNormalizado = correo.trim().toLowerCase();
+
+        if (password.length < 8) {
+            return res.status(400).json({
+                mensaje: 'La contraseña debe tener al menos 8 caracteres.'
+            });
+        }
+
+        const existeUsuario = await Usuario.findOne({
+            correo: correoNormalizado
+        });
+
+        if (existeUsuario) {
+            return res.status(400).json({
+                mensaje: 'Este correo ya está registrado.'
+            });
+        }
+
+        // Encriptar la contraseña antes de guardarla
+        const passwordSegura = await bcrypt.hash(password, 10);
+
+        const nuevoUsuario = new Usuario({
+            nombre: nombre.trim(),
+            correo: correoNormalizado,
+            password: passwordSegura
+        });
+
         await nuevoUsuario.save();
 
-        res.json({
+        res.status(201).json({
             mensaje: 'Usuario registrado con éxito.',
             usuario: {
                 nombre: nuevoUsuario.nombre,
                 correo: nuevoUsuario.correo
             }
         });
+
     } catch (error) {
-        res.status(500).json({ mensaje: 'Error al registrar usuario.' });
+        console.error('Error al registrar:', error.message);
+
+        res.status(500).json({
+            mensaje: 'Error al registrar el usuario.'
+        });
     }
 });
 
-// Iniciar sesión de usuario
+// Iniciar sesión
 app.post('/api/login', async (req, res) => {
     try {
         const { correo, password } = req.body;
 
-        const usuarioEncontrado = await Usuario.findOne({ correo: correo, password: password });
-        if (!usuarioEncontrado) {
-            return res.status(401).json({ mensaje: 'Correo o contraseña incorrectos.' });
+        if (!correo || !password) {
+            return res.status(400).json({
+                mensaje: 'Debes ingresar correo y contraseña.'
+            });
         }
 
-        res.json({
-            mensaje: 'Inicio de sesión exitoso.',
-            usuario: {
-                nombre: usuarioEncontrado.nombre,
-                correo: usuarioEncontrado.correo
-            }
+        const correoNormalizado = correo.trim().toLowerCase();
+
+        const usuarioEncontrado = await Usuario.findOne({
+            correo: correoNormalizado
         });
+
+        if (!usuarioEncontrado) {
+            return res.status(401).json({
+                mensaje: 'Correo o contraseña incorrectos.'
+            });
+        }
+
+        let contraseñaCorrecta = false;
+
+        // Detectar si la contraseña ya está protegida con bcrypt
+        const esHashBcrypt = /^\$2[aby]\$/.test(usuarioEncontrado.password);
+
+        if (esHashBcrypt) {
+            contraseñaCorrecta = await bcrypt.compare(
+                password,
+                usuarioEncontrado.password
+            );
+        } else {
+            // Compatibilidad con usuarios registrados antes de este cambio
+            contraseñaCorrecta = password === usuarioEncontrado.password;
+
+            // Si la contraseña antigua coincide, protegerla ahora
+            if (contraseñaCorrecta) {
+                usuarioEncontrado.password = await bcrypt.hash(password, 10);
+                await usuarioEncontrado.save();
+            }
+        }
+
+        if (!contraseñaCorrecta) {
+            return res.status(401).json({
+                mensaje: 'Correo o contraseña incorrectos.'
+            });
+        }
+
+        
+const token = jwt.sign(
+    {
+        id: usuarioEncontrado._id,
+        correo: usuarioEncontrado.correo,
+        rol: usuarioEncontrado.rol || 'usuario'
+    },
+    process.env.JWT_SECRETO,
+    { expiresIn: '2h' }
+);
+
+res.json({
+    mensaje: 'Inicio de sesión exitoso.',
+    token: token,
+    usuario: {
+        nombre: usuarioEncontrado.nombre,
+        correo: usuarioEncontrado.correo,
+        rol: usuarioEncontrado.rol || 'usuario'
+    }
+});
+
     } catch (error) {
-        res.status(500).json({ mensaje: 'Error en el servidor al iniciar sesión.' });
+        console.error('Error al iniciar sesión:', error.message);
+
+        res.status(500).json({
+            mensaje: 'Error en el servidor al iniciar sesión.'
+        });
     }
 });
 
 // ==========================================
-// RUTAS DE PRODUCTOS ARTESANALES
+// RUTAS DE PRODUCTOS
 // ==========================================
 
-// Obtener todos los productos
+// Obtener productos
 app.get('/api/productos', async (req, res) => {
     try {
         const productos = await Producto.find();
         res.json(productos);
     } catch (error) {
-        res.status(500).json({ mensaje: 'Error al obtener los productos.' });
+        console.error(error.message);
+
+        res.status(500).json({
+            mensaje: 'Error al obtener los productos.'
+        });
     }
 });
 
-// Crear un nuevo producto artesanal desde el Dashboard
-app.post('/api/productos', async (req, res) => {
+// Crear producto
+app.post('/api/productos', verificarToken, verificarAdmin, async (req, res) => {
     try {
         const { nombre, descripcion, precio, imagen, personaje } = req.body;
 
+        if (!nombre || !descripcion || !imagen || !personaje ||
+            precio === undefined || Number(precio) <= 0 ||
+            !Number.isFinite(Number(precio))) {
+            return res.status(400).json({
+                mensaje: 'Completa todos los campos con datos válidos.'
+            });
+        }
+
         const nuevoProducto = new Producto({
-            nombre,
-            descripcion,
+            nombre: nombre.trim(),
+            descripcion: descripcion.trim(),
             precio: Number(precio),
             imagen,
             personaje
         });
 
         await nuevoProducto.save();
-        res.json({
+
+        res.status(201).json({
             mensaje: 'Producto artesanal guardado correctamente.',
             producto: nuevoProducto
         });
+
     } catch (error) {
-        res.status(500).json({ mensaje: 'Error al guardar el producto.' });
+        console.error(error.message);
+
+        res.status(500).json({
+            mensaje: 'Error al guardar el producto.'
+        });
     }
 });
 
-// Eliminar un producto desde el Dashboard
-app.delete('/api/productos/:id', async (req, res) => {
+// Eliminar producto
+app.delete('/api/productos/:id', verificarToken, verificarAdmin, async (req, res) => {
     try {
-        await Producto.findByIdAndDelete(req.params.id);
-        res.json({ mensaje: 'Producto eliminado correctamente.' });
+        if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+            return res.status(400).json({
+                mensaje: 'El identificador del producto no es válido.'
+            });
+        }
+
+        const productoEliminado = await Producto.findByIdAndDelete(
+            req.params.id
+        );
+
+        if (!productoEliminado) {
+            return res.status(404).json({
+                mensaje: 'No se encontró el producto.'
+            });
+        }
+
+        res.json({
+            mensaje: 'Producto eliminado correctamente.'
+        });
+
     } catch (error) {
-        res.status(500).json({ mensaje: 'Error al eliminar el producto.' });
+        console.error(error.message);
+
+        res.status(500).json({
+            mensaje: 'Error al eliminar el producto.'
+        });
     }
 });
 
@@ -182,32 +354,76 @@ app.delete('/api/productos/:id', async (req, res) => {
 // RUTAS DE CONTACTO
 // ==========================================
 
-// Guardar un mensaje enviado desde Contacto.html
+// Guardar mensaje
 app.post('/api/contacto', async (req, res) => {
     try {
         const { nombre, correo, mensaje } = req.body;
 
-        const nuevoMensaje = new Contacto({ nombre, correo, mensaje });
+        if (!nombre || !correo || !mensaje) {
+            return res.status(400).json({
+                mensaje: 'Completa todos los campos.'
+            });
+        }
+
+        const nuevoMensaje = new Contacto({
+            nombre: nombre.trim(),
+            correo: correo.trim().toLowerCase(),
+            mensaje: mensaje.trim()
+        });
+
         await nuevoMensaje.save();
 
-        res.json({ mensaje: '¡Gracias por escribirnos! Tu mensaje fue guardado.' });
+        res.status(201).json({
+            mensaje: '¡Gracias por escribirnos! Tu mensaje fue guardado.'
+        });
+
     } catch (error) {
-        res.status(500).json({ mensaje: 'Error al enviar el mensaje de contacto.' });
+        console.error(error.message);
+
+        res.status(500).json({
+            mensaje: 'Error al enviar el mensaje de contacto.'
+        });
     }
 });
 
-// Ver todos los mensajes de contacto en el Dashboard
-app.get('/api/contacto', async (req, res) => {
+// Obtener mensajes
+app.get('/api/contacto', verificarToken, verificarAdmin, async (req, res) => {
     try {
         const mensajes = await Contacto.find().sort({ fecha: -1 });
         res.json(mensajes);
     } catch (error) {
-        res.status(500).json({ mensaje: 'Error al obtener los mensajes.' });
+        console.error(error.message);
+
+        res.status(500).json({
+            mensaje: 'Error al obtener los mensajes.'
+        });
     }
 });
 
-// Iniciar el servidor
-app.listen(PUERTO, () => {
-    console.log('Servidor corriendo en http://localhost:' + PUERTO);
-});
+// ==========================================
+// CONEXIÓN Y ENCENDIDO DEL SERVIDOR
+// ==========================================
 
+async function iniciarServidor() {
+    try {
+        if (!MONGO_URI) {
+            throw new Error('No se encontró MONGO_URI en el archivo .env');
+        }
+
+        await mongoose.connect(MONGO_URI);
+
+        console.log('Conectado correctamente a MongoDB.');
+
+        await cargarProductosIniciales();
+
+        app.listen(PUERTO, () => {
+            console.log(`Servidor corriendo en http://localhost:${PUERTO}`);
+        });
+
+    } catch (error) {
+        console.error('No se pudo iniciar el servidor:', error.message);
+        process.exit(1);
+    }
+}
+
+iniciarServidor();

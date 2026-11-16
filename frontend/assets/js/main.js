@@ -3,7 +3,49 @@
 // =======================================================
 
 const URL_API = 'http://localhost:3000/api';
+function actualizarMenuSesion() {
+    const usuario = JSON.parse(localStorage.getItem('usuarioGhibli') || 'null');
+    const enlacesMenu = document.querySelectorAll('.enlaces-menu');
 
+    enlacesMenu.forEach(function (menu) {
+        const enlaceLogin = menu.querySelector('a[href="Login.html"]');
+        const enlaceDashboard = menu.querySelector('a[href="Dashboard.html"]');
+
+        if (enlaceLogin) {
+            enlaceLogin.parentElement.style.display = usuario ? 'none' : '';
+        }
+
+        if (enlaceDashboard) {
+            enlaceDashboard.parentElement.style.display =
+                usuario && usuario.rol === 'admin' ? '' : 'none';
+        }
+        if (usuario) {
+    let enlaceCerrar = menu.querySelector('.enlace-cerrar-sesion');
+
+    if (!enlaceCerrar) {
+        const nuevoElemento = document.createElement('li');
+        enlaceCerrar = document.createElement('a');
+
+        enlaceCerrar.href = '#';
+        enlaceCerrar.className = 'enlace-cerrar-sesion';
+        enlaceCerrar.textContent = 'Cerrar sesión';
+
+        enlaceCerrar.addEventListener('click', function (evento) {
+            evento.preventDefault();
+
+            localStorage.removeItem('usuarioGhibli');
+            localStorage.removeItem('tokenGhibli');
+
+            window.location.href = 'Login.html';
+        });
+
+        nuevoElemento.appendChild(enlaceCerrar);
+        menu.appendChild(nuevoElemento);
+    }
+}
+    });
+}
+actualizarMenuSesion();
 // Lista de productos base por si el servidor aún no está encendido
 const productosBase = [
     {
@@ -272,6 +314,7 @@ function enviarFormularioContacto(evento) {
 // FUNCIONES DE LOGIN Y REGISTRO (Login.html)
 // =======================================================
 
+
 function iniciarSesion(evento) {
     evento.preventDefault();
 
@@ -282,26 +325,39 @@ function iniciarSesion(evento) {
     fetch(URL_API + '/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ correo: correo, password: password })
+        body: JSON.stringify({ correo, password })
     })
-        .then(function (respuesta) {
-            return respuesta.json().then(function (datos) {
-                return { ok: respuesta.ok, datos: datos };
-            });
-        })
-        .then(function (resultado) {
-            estado.innerHTML = resultado.datos.mensaje;
-            if (resultado.ok) {
-                localStorage.setItem('usuarioGhibli', JSON.stringify(resultado.datos.usuario));
-                setTimeout(function () {
-                    window.location.href = 'Dashboard.html';
-                }, 1000);
+        .then(async function (respuesta) {
+            const datos = await respuesta.json();
+
+            if (!respuesta.ok) {
+                throw new Error(datos.mensaje || 'No se pudo iniciar sesión.');
             }
+
+            return datos;
         })
-        .catch(function () {
-            estado.innerHTML = 'Error al conectar con el servidor.';
+        .then(function (datos) {
+            estado.textContent = datos.mensaje;
+
+            localStorage.setItem(
+                'usuarioGhibli',
+                JSON.stringify(datos.usuario)
+            );
+localStorage.setItem('tokenGhibli', datos.token);
+            setTimeout(function () {
+    if (datos.usuario.rol === 'admin') {
+        window.location.href = 'Dashboard.html';
+    } else {
+        window.location.href = 'index.html';
+    }
+}, 1000);
+        })
+        .catch(function (error) {
+            estado.textContent = error.message;
         });
 }
+
+
 
 function registrarUsuario(evento) {
     evento.preventDefault();
@@ -314,17 +370,23 @@ function registrarUsuario(evento) {
     fetch(URL_API + '/registro', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nombre: nombre, correo: correo, password: password })
+        body: JSON.stringify({ nombre, correo, password })
     })
-        .then(function (respuesta) {
-            return respuesta.json();
+        .then(async function (respuesta) {
+            const datos = await respuesta.json();
+
+            if (!respuesta.ok) {
+                throw new Error(datos.mensaje || 'No se pudo registrar.');
+            }
+
+            return datos;
         })
         .then(function (datos) {
-            estado.innerHTML = datos.mensaje;
+            estado.textContent = datos.mensaje;
             document.getElementById('form-registro').reset();
         })
-        .catch(function () {
-            estado.innerHTML = 'Error al conectar con el servidor.';
+        .catch(function (error) {
+            estado.textContent = error.message;
         });
 }
 
@@ -344,7 +406,10 @@ function guardarProductoDashboard(evento) {
 
     fetch(URL_API + '/productos', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ' + localStorage.getItem('tokenGhibli')
+},
         body: JSON.stringify({
             nombre: nombre,
             personaje: personaje,
@@ -367,6 +432,14 @@ function guardarProductoDashboard(evento) {
 }
 
 function cargarDatosDashboard() {
+    const usuario = JSON.parse(localStorage.getItem('usuarioGhibli') || '{}');
+    const panelAdmin = document.getElementById('panel-administrador');
+
+    if (panelAdmin && (usuario.rol !== 'admin' || !localStorage.getItem('tokenGhibli'))) {
+    window.location.replace('Login.html');
+    return;
+}
+
     const tablaProductos = document.getElementById('tabla-productos-dashboard');
     const tablaMensajes = document.getElementById('tabla-mensajes-dashboard');
 
@@ -395,7 +468,11 @@ function cargarDatosDashboard() {
     }
 
     if (tablaMensajes) {
-        fetch(URL_API + '/contacto')
+        fetch(URL_API + '/contacto', {
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('tokenGhibli')
+            }
+        })
             .then(function (res) { return res.json(); })
             .then(function (mensajes) {
                 tablaMensajes.innerHTML = '';
@@ -419,11 +496,13 @@ function cargarDatosDashboard() {
             });
     }
 }
-
 function eliminarProductoBackend(id) {
-    fetch(URL_API + '/productos/' + id, {
-        method: 'DELETE'
-    })
+   fetch(URL_API + '/productos/' + id, {
+    method: 'DELETE',
+    headers: {
+        'Authorization': 'Bearer ' + localStorage.getItem('tokenGhibli')
+    }
+})
         .then(function (res) { return res.json(); })
         .then(function () {
             cargarDatosDashboard();

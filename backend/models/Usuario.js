@@ -1,21 +1,28 @@
+
 const mongoose = require('mongoose');
 
-// Esquema simple para los usuarios registrados en la tienda
 const UsuarioSchema = new mongoose.Schema({
     nombre: {
         type: String,
-        required: true
+        required: true,
+        trim: true
     },
     correo: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
+        lowercase: true,
+        trim: true
     },
     password: {
         type: String,
         required: true
+    },
+    rol: {
+        type: String,
+        enum: ['usuario', 'admin'],
+        default: 'usuario'
     }
 });
 
 module.exports = mongoose.model('Usuario', UsuarioSchema);
-
