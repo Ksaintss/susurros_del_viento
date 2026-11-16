@@ -98,7 +98,7 @@ const productosBase = [
         nombre: 'Terrario de Cristal Ponyo en el Mar',
         descripcion: 'Mini escenario hecho a mano con figuras en porcelana fría y piedras naturales.',
         precio: 58000,
-        imagen: 'assets/img/Ponyo.jpg',
+        imagen: 'assets/img/ponyoterrario.png',
         personaje: 'Ponyo'
     },
     {
@@ -106,7 +106,7 @@ const productosBase = [
         nombre: 'Tote Bag Bordada Jiji y Kiki',
         descripcion: 'Bolso de lienzo crudo 100% algodón con bordado artesanal hecho puntada a puntada.',
         precio: 42000,
-        imagen: 'assets/img/Kiki.jpg',
+        imagen: 'assets/img/kiki&jiji.png',
         personaje: 'Kiki'
     }
 ];
@@ -139,12 +139,13 @@ function actualizarContadorMenu() {
     }
 }
 
-function agregarAlCarrito(nombre, precio, personaje) {
+function agregarAlCarrito(nombre, precio, personaje, imagen) {
     const carrito = obtenerCarrito();
     carrito.push({
         nombre: nombre,
         precio: Number(precio),
-        personaje: personaje
+        personaje: personaje,
+        imagen: imagen
     });
     guardarCarrito(carrito);
     alert('Producto agregado al carrito: ' + nombre);
@@ -174,7 +175,12 @@ function mostrarCarrito() {
 
         tablaCuerpo.innerHTML += `
             <tr>
-                <td>${item.nombre}</td>
+                    <td>
+                        <div class="producto-carrito">
+                            ${item.imagen ? `<img src="${rutaImagen(item.imagen)}" alt="${item.nombre}">` : ''}
+                            <span>${item.nombre}</span>
+                        </div>
+                    </td>
                 <td>${item.personaje}</td>
                 <td>$${item.precio.toLocaleString('es-CO')} COP</td>
                 <td>
@@ -221,23 +227,85 @@ function cargarProductosCatalogo() {
         return;
     }
 
-    fetch(URL_API + '/productos')
+    const productosCatalogo = fetch(URL_API + '/productos')
         .then(function (respuesta) {
             return respuesta.json();
         })
         .then(function (datos) {
-            if (Array.isArray(datos) && datos.length > 0) {
-                listaProductos = datos;
-            } else {
-                listaProductos = productosBase;
-            }
-            dibujarTarjetasProductos(listaProductos, 'contenedor-catalogo');
+            return Array.isArray(datos) && datos.length > 0 ? datos : productosBase;
         })
         .catch(function () {
             // Si el backend no está prendido, mostramos los productos base
-            listaProductos = productosBase;
-            dibujarTarjetasProductos(listaProductos, 'contenedor-catalogo');
+            return productosBase;
         });
+
+    const productosInicio = fetch(RAIZ + 'index.html')
+        .then(function (respuesta) {
+            if (!respuesta.ok) {
+                throw new Error('No se pudo cargar index.html.');
+            }
+            return respuesta.text();
+        })
+        .then(leerProductosInicio)
+        .catch(function (error) {
+            console.error('No se pudieron cargar las imágenes de Inicio en el catálogo:', error);
+            return [];
+        });
+
+    Promise.all([productosCatalogo, productosInicio]).then(function (resultados) {
+        listaProductos = combinarProductosCatalogo(resultados[0], resultados[1]);
+        dibujarTarjetasProductos(listaProductos, 'contenedor-catalogo');
+    });
+}
+
+function leerProductosInicio(html) {
+    const documento = new DOMParser().parseFromString(html, 'text/html');
+    const tarjetas = documento.querySelectorAll('.contenedor-seccion .contenedor-productos .tarjeta-producto');
+    const productos = [];
+
+    for (let i = 0; i < tarjetas.length; i++) {
+        const tarjeta = tarjetas[i];
+        const imagen = tarjeta.querySelector('img');
+        const nombre = tarjeta.querySelector('.info-producto h3');
+        const personaje = tarjeta.querySelector('.etiqueta-personaje');
+        const descripcion = tarjeta.querySelector('.info-producto > div:first-child > p:not(.etiqueta-personaje)');
+        const precio = tarjeta.querySelector('.precio-producto');
+
+        if (!imagen || !nombre || !personaje || !descripcion || !precio) {
+            console.warn('Se omitió una tarjeta de Inicio porque le faltan datos de producto.');
+            continue;
+        }
+
+        productos.push({
+            nombre: nombre.textContent.trim(),
+            personaje: personaje.textContent.trim(),
+            descripcion: descripcion.textContent.trim(),
+            precio: Number(precio.textContent.replace(/[^\d]/g, '')),
+            imagen: imagen.getAttribute('src')
+        });
+    }
+
+    return productos;
+}
+
+function combinarProductosCatalogo(productosCatalogo, productosInicio) {
+    const productos = productosCatalogo.slice();
+
+    for (let i = 0; i < productosInicio.length; i++) {
+        const productoInicio = productosInicio[i];
+        const nombreInicio = productoInicio.nombre.toLowerCase();
+        const indiceExistente = productos.findIndex(function (producto) {
+            return producto.nombre.toLowerCase() === nombreInicio;
+        });
+
+        if (indiceExistente === -1) {
+            productos.push(productoInicio);
+        } else {
+            productos[indiceExistente].imagen = productoInicio.imagen;
+        }
+    }
+
+    return productos;
 }
 
 function dibujarTarjetasProductos(productos, idContenedor) {
@@ -261,7 +329,7 @@ function dibujarTarjetasProductos(productos, idContenedor) {
                     </div>
                     <div>
                         <p class="precio-producto">$${Number(prod.precio).toLocaleString('es-CO')} COP</p>
-                        <button class="boton-agregar" onclick="agregarAlCarrito('${prod.nombre}', ${prod.precio}, '${prod.personaje}')">
+                        <button class="boton-agregar" onclick="agregarAlCarrito('${prod.nombre}', ${prod.precio}, '${prod.personaje}', '${prod.imagen}')">
                             Agregar al carrito
                         </button>
                     </div>

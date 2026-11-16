@@ -137,7 +137,7 @@ a {
 .banner-imagen {
     flex: 1.2;
     min-width: 320px;
-    height: 400px;
+    height: 420px;
 }
 
 .banner-imagen img {
@@ -152,14 +152,14 @@ a {
     max-width: 1280px;
     margin: 40px auto;
     background-color: #FFFFFF;
-    border: 1px solid #E5E5E0;
+    border: 10px solid #FFFFFF;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
 }
 
 .banner-secundario .banner-imagen {
-    height: 300px;
+    height: 420px;
 }
 
 /* =======================================================
@@ -397,6 +397,19 @@ a {
     font-size: 12px;
     letter-spacing: 1px;
     color: #333333;
+}
+
+.producto-carrito {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.producto-carrito img {
+    width: 64px;
+    height: 64px;
+    object-fit: cover;
+    border-radius: 6px;
 }
 
 .resumen-carrito {
