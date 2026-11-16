@@ -3,13 +3,26 @@
 // =======================================================
 
 const URL_API = 'http://localhost:3000/api';
+
+// Rutas: este script lo cargan index.html (raíz) y las páginas de assets/pages/
+const EN_PAGINAS = window.location.pathname.indexOf('/assets/pages/') !== -1;
+const RAIZ = EN_PAGINAS ? '../../' : '';
+const PAGINAS = EN_PAGINAS ? '' : 'assets/pages/';
+
+// Las imágenes se guardan con ruta desde la raíz (ej: assets/img/Totoro.jpg)
+function rutaImagen(ruta) {
+    if (/^(https?:|data:|\/)/.test(ruta)) {
+        return ruta;
+    }
+    return RAIZ + ruta;
+}
 function actualizarMenuSesion() {
     const usuario = JSON.parse(localStorage.getItem('usuarioGhibli') || 'null');
     const enlacesMenu = document.querySelectorAll('.enlaces-menu');
 
     enlacesMenu.forEach(function (menu) {
-        const enlaceLogin = menu.querySelector('a[href="Login.html"]');
-        const enlaceDashboard = menu.querySelector('a[href="Dashboard.html"]');
+        const enlaceLogin = menu.querySelector('a[href$="Login.html"]');
+        const enlaceDashboard = menu.querySelector('a[href$="Dashboard.html"]');
 
         if (enlaceLogin) {
             enlaceLogin.parentElement.style.display = usuario ? 'none' : '';
@@ -36,7 +49,7 @@ function actualizarMenuSesion() {
             localStorage.removeItem('usuarioGhibli');
             localStorage.removeItem('tokenGhibli');
 
-            window.location.href = 'Login.html';
+            window.location.href = PAGINAS + 'Login.html';
         });
 
         nuevoElemento.appendChild(enlaceCerrar);
@@ -239,7 +252,7 @@ function dibujarTarjetasProductos(productos, idContenedor) {
         const prod = productos[i];
         contenedor.innerHTML += `
             <div class="tarjeta-producto">
-                <img src="${prod.imagen}" alt="${prod.nombre}">
+                <img src="${rutaImagen(prod.imagen)}" alt="${prod.nombre}">
                 <div class="info-producto">
                     <div>
                         <p class="etiqueta-personaje">${prod.personaje}</p>
@@ -346,9 +359,9 @@ function iniciarSesion(evento) {
 localStorage.setItem('tokenGhibli', datos.token);
             setTimeout(function () {
     if (datos.usuario.rol === 'admin') {
-        window.location.href = 'Dashboard.html';
+        window.location.href = PAGINAS + 'Dashboard.html';
     } else {
-        window.location.href = 'index.html';
+        window.location.href = RAIZ + 'index.html';
     }
 }, 1000);
         })
@@ -436,7 +449,7 @@ function cargarDatosDashboard() {
     const panelAdmin = document.getElementById('panel-administrador');
 
     if (panelAdmin && (usuario.rol !== 'admin' || !localStorage.getItem('tokenGhibli'))) {
-    window.location.replace('Login.html');
+    window.location.replace(PAGINAS + 'Login.html');
     return;
 }
 
