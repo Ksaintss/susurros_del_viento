@@ -376,7 +376,7 @@ function PaginaLogin() {
     evento.preventDefault();
 
     try {
-      const datos = await enviarJSON('/login', login, 'No se pudo iniciar sesión.');
+      const datos = await enviarJSON('/api/login', login, 'No se pudo iniciar sesión.');
 
       setEstadoLogin(datos.mensaje);
       iniciarSesion(datos.usuario, datos.token);
@@ -393,7 +393,7 @@ function PaginaLogin() {
     evento.preventDefault();
 
     try {
-      const datos = await enviarJSON('/registro', registro, 'No se pudo registrar.');
+      const datos = await enviarJSON('/api/registro', registro, 'No se pudo registrar.');
 
       setEstadoRegistro(datos.mensaje);
       setRegistro({ nombre: '', correo: '', password: '' });
