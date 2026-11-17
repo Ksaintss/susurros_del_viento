@@ -121,7 +121,7 @@ function PaginaCatalogo() {
   useEffect(() => {
     let activo = true;
 
-    fetch(URL_API + '/productos')
+    fetch(URL_API + '/api/productos')
       .then((respuesta) => respuesta.json())
       .then((datos) => (Array.isArray(datos) && datos.length > 0 ? datos : productosBase))
       // Si el backend no está prendido, mostramos los productos base
