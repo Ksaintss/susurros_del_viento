@@ -552,7 +552,7 @@ function PaginaDashboard() {
     evento.preventDefault();
 
     try {
-      const respuesta = await fetch(URL_API + '/productos', {
+      const respuesta = await fetch(URL_API + '/api/productos', {
         method: 'POST',
         headers: cabecerasConToken(token),
         body: JSON.stringify({ ...form, precio: Number(form.precio) })
@@ -571,7 +571,7 @@ function PaginaDashboard() {
 
   async function eliminarProducto(id) {
     try {
-      await fetch(URL_API + '/productos/' + id, {
+      await fetch(URL_API + '/api/productos/' + id, {
         method: 'DELETE',
         headers: cabecerasConToken(token)
       });
