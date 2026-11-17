@@ -1,5 +1,5 @@
 // URL del backend
-const URL_API = 'http://localhost:3000/api';
+const URL_API = 'https://backend-susurrosdelviento.onrender.com';
 
 // Productos base por si el servidor aún no está encendido
 const productosBase = [
