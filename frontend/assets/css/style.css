@@ -167,16 +167,17 @@ a {
    ======================================================= */
 
 .boton-principal {
-    display: inline-block;
-    background-color: #1A1A1A;
-    color: #FFFFFF;
-    padding: 12px 26px;
-    font-size: 13px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    border: none;
-    cursor: pointer;
+  display: inline-block;
+  background-color: #1f1f1f;
+  color: #FFFFFF;
+  padding: 5px 5px;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border: 10px solid #1f1f1f;
+  cursor: pointer;
+  margin: 10px auto;
 }
 
 .boton-principal:hover {
@@ -202,12 +203,16 @@ a {
 }
 
 .boton-eliminar {
-    background-color: #B93829;
-    color: #FFFFFF;
-    border: none;
-    padding: 7px 12px;
-    font-size: 12px;
-    cursor: pointer;
+  background-color: #B93829;
+  color: #FFFFFF;
+   padding: 5px 5px;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border: 10px solid #B93829;
+  cursor: pointer;
+  margin-right: 15px;
 }
 
 .boton-eliminar:hover {
