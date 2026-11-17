@@ -393,7 +393,7 @@ function PaginaLogin() {
     evento.preventDefault();
 
     try {
-      const datos = await enviarJSON('/registro', registro, 'No se pudo registrar.');
+      const datos = await enviarJSON('/api/registro', registro, 'No se pudo registrar.');
 
       setEstadoRegistro(datos.mensaje);
       setRegistro({ nombre: '', correo: '', password: '' });
