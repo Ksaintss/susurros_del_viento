@@ -258,7 +258,7 @@ function PaginaContacto() {
     evento.preventDefault();
 
     try {
-      const respuesta = await fetch(URL_API + '/contacto', {
+      const respuesta = await fetch(URL_API + '/api/contacto', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form)
@@ -513,7 +513,7 @@ function PaginaDashboard() {
 
   const cargarDatos = useCallback(async () => {
     try {
-      const respuesta = await fetch(URL_API + '/productos');
+      const respuesta = await fetch(URL_API + '/api/productos');
       const datos = await respuesta.json();
       setProductos(Array.isArray(datos) ? datos : []);
       setErrorProductos(false);
@@ -522,7 +522,7 @@ function PaginaDashboard() {
     }
 
     try {
-      const respuesta = await fetch(URL_API + '/contacto', {
+      const respuesta = await fetch(URL_API + '/api/contacto', {
         headers: cabecerasConToken(token)
       });
 
