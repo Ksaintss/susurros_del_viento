@@ -8,6 +8,14 @@ function Navbar({ ruta }) {
 
   const activo = (destino) => (ruta === destino ? 'activo' : undefined);
 
+  // Menú hamburguesa (solo se ve en celulares)
+  const [menuAbierto, setMenuAbierto] = useState(false);
+
+  // Cierra el menú cada vez que se cambia de página
+  useEffect(() => {
+    setMenuAbierto(false);
+  }, [ruta]);
+
   return (
     <header className="barra-navegacion">
       <Enlace a="/" className="logo-tienda">
@@ -15,7 +23,19 @@ function Navbar({ ruta }) {
         <span>Arte &amp; Hecho a Mano</span>
       </Enlace>
 
-      <ul className="enlaces-menu">
+      <button
+        type="button"
+        className={'boton-hamburguesa' + (menuAbierto ? ' abierto' : '')}
+        aria-label="Abrir menú"
+        aria-expanded={menuAbierto}
+        onClick={() => setMenuAbierto(!menuAbierto)}
+      >
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <ul className={'enlaces-menu' + (menuAbierto ? ' abierto' : '')}>
         <li><Enlace a="/" className={activo('/')}>Inicio</Enlace></li>
         <li><Enlace a="/conocenos" className={activo('/conocenos')}>Conócenos</Enlace></li>
         <li><Enlace a="/catalogo" className={activo('/catalogo')}>Catálogo</Enlace></li>
@@ -66,7 +86,7 @@ function TarjetaProducto({ producto }) {
 
   return (
     <div className="tarjeta-producto">
-      <img src={rutaImagen(producto.imagen)} alt={producto.nombre} />
+      <img src={rutaImagen(producto.imagen)} alt={producto.nombre} loading="lazy" />
       <div className="info-producto">
         <div>
           <p className="etiqueta-personaje">{producto.personaje}</p>

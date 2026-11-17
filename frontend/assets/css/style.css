@@ -506,3 +506,375 @@ a {
     color: #666666;
 }
 
+
+
+/* =======================================================
+   DISEÑO RESPONSIVE (celulares y tablets)
+   Todo lo de abajo solo se activa en pantallas pequeñas;
+   el diseño de computador no cambia.
+   ======================================================= */
+
+/* ----- Reglas base (seguras para todas las pantallas) ----- */
+
+img {
+    max-width: 100%;
+}
+
+/* El panel de productos/mensajes del Dashboard (antes era un estilo en línea) */
+.panel-dashboard {
+    flex: 1;
+    min-width: 320px;
+}
+
+/* El botón hamburguesa no se ve en computador */
+.boton-hamburguesa {
+    display: none;
+}
+
+/* ----- Tablets y celulares grandes: menú hamburguesa ----- */
+@media (max-width: 1024px) {
+
+    body {
+        padding-top: 72px;
+    }
+
+    .barra-navegacion {
+        padding: 12px 4%;
+    }
+
+    .logo-tienda {
+        font-size: 18px;
+        letter-spacing: 1.5px;
+        line-height: 1.25;
+    }
+
+    .logo-tienda span {
+        font-size: 11px;
+        line-height: 1.25;
+    }
+
+    .boton-hamburguesa {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 5px;
+        width: 44px;
+        height: 44px;
+        background: transparent;
+        border: 1px solid #E5E5E0;
+        cursor: pointer;
+        flex-shrink: 0;
+    }
+
+    .boton-hamburguesa span {
+        display: block;
+        width: 22px;
+        height: 2px;
+        background-color: #1A1A1A;
+        transition: transform 0.25s ease, opacity 0.25s ease;
+    }
+
+    /* Las 3 rayitas se vuelven una X al abrir el menú */
+    .boton-hamburguesa.abierto span:nth-child(1) {
+        transform: translateY(7px) rotate(45deg);
+    }
+
+    .boton-hamburguesa.abierto span:nth-child(2) {
+        opacity: 0;
+    }
+
+    .boton-hamburguesa.abierto span:nth-child(3) {
+        transform: translateY(-7px) rotate(-45deg);
+    }
+
+    /* El menú pasa a ser una lista desplegable debajo de la barra */
+    .enlaces-menu {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+        background-color: #FFFFFF;
+        border-bottom: 1px solid #E5E5E0;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+        max-height: calc(100vh - 72px);
+        overflow-y: auto;
+    }
+
+    .enlaces-menu.abierto {
+        display: flex;
+    }
+
+    .enlaces-menu li {
+        border-top: 1px solid #F0EFEA;
+    }
+
+    .enlaces-menu li a {
+        display: block;
+        padding: 16px 5%;
+        border-bottom: none;
+        border-left: 4px solid transparent;
+    }
+
+    .enlaces-menu li a:hover,
+    .enlaces-menu li a.activo {
+        border-bottom: none;
+        border-left: 4px solid #2F4F3E;
+        background-color: #F5F4F0;
+    }
+
+    /* Banners y dashboard */
+    .banner-imagen,
+    .banner-secundario .banner-imagen {
+        height: 320px;
+    }
+}
+
+/* ----- Tablets pequeñas y celulares ----- */
+@media (max-width: 768px) {
+
+    .banner-principal {
+        margin: 14px auto 28px auto;
+    }
+
+    .banner-texto {
+        min-width: 0;
+        flex-basis: 100%;
+        padding: 32px 24px;
+    }
+
+    .banner-texto h1 {
+        font-size: 28px;
+    }
+
+    .banner-texto p {
+        font-size: 15px;
+    }
+
+    .banner-imagen,
+    .banner-secundario .banner-imagen {
+        min-width: 0;
+        flex-basis: 100%;
+        height: 260px;
+    }
+
+    .banner-secundario {
+        margin: 28px auto;
+        border-width: 6px;
+    }
+
+    .contenedor-seccion {
+        margin: 32px auto;
+    }
+
+    .titulo-seccion h2 {
+        font-size: 21px;
+        letter-spacing: 1px;
+    }
+
+    .titulo-seccion p {
+        font-size: 14px;
+    }
+
+    /* Catálogo: 2 columnas */
+    .contenedor-productos {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+
+    .tarjeta-producto img {
+        height: 220px;
+    }
+
+    .info-producto {
+        padding: 14px;
+    }
+
+    .mision-vision {
+        margin: 35px auto;
+        gap: 16px;
+    }
+
+    .caja-mision {
+        min-width: 0;
+        flex-basis: 100%;
+        padding: 26px 20px;
+    }
+
+    /* Formularios y dashboard: uno debajo del otro */
+    .contenedor-doble {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 22px;
+    }
+
+    .formulario {
+        max-width: 100%;
+        padding: 24px 18px;
+    }
+
+    .panel-dashboard {
+        flex: none;
+        min-width: 0 !important;
+        width: 100%;
+    }
+
+    /* Campos y botones cómodos para el dedo (16px evita el zoom en iPhone) */
+    .grupo-campo input,
+    .grupo-campo textarea,
+    .grupo-campo select {
+        font-size: 16px;
+        padding: 12px;
+    }
+
+    .boton-principal,
+    .boton-agregar {
+        min-height: 44px;
+    }
+
+    .boton-filtro {
+        padding: 10px 14px;
+        font-size: 12px;
+    }
+
+    /* Tablas: cada fila se convierte en una tarjeta */
+    .contenedor-carrito {
+        padding: 16px;
+    }
+
+    .tabla-carrito,
+    .tabla-carrito tbody,
+    .tabla-carrito tr,
+    .tabla-carrito td {
+        display: block;
+        width: 100%;
+    }
+
+    .tabla-carrito thead {
+        display: none;
+    }
+
+    .tabla-carrito tr {
+        border: 1px solid #E8E6DF;
+        background-color: #FFFFFF;
+        margin-bottom: 14px;
+        padding: 4px 0;
+    }
+
+    .tabla-carrito td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 14px;
+        text-align: right;
+        border-bottom: 1px solid #F0EFEA;
+        padding: 10px 14px;
+        overflow-wrap: anywhere;
+    }
+
+    .tabla-carrito td:last-child {
+        border-bottom: none;
+    }
+
+    .tabla-carrito td[data-label]::before {
+        content: attr(data-label);
+        flex-shrink: 0;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #5C6F58;
+        text-align: left;
+    }
+
+    /* Mensajes tipo "carrito vacío" (celdas sin etiqueta) */
+    .tabla-carrito td[colspan] {
+        display: block;
+        text-align: center;
+    }
+
+    .producto-carrito {
+        flex-direction: row-reverse;
+        text-align: right;
+    }
+
+    .resumen-carrito {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+    }
+
+    .resumen-carrito > div:last-child {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .resumen-carrito .boton-eliminar {
+        min-height: 44px;
+        font-size: 13px;
+    }
+
+    .boton-eliminar {
+        min-height: 36px;
+        padding: 8px 14px;
+    }
+
+    .pie-pagina {
+        margin-top: 40px;
+        padding: 22px 16px;
+    }
+}
+
+/* ----- Celulares pequeños ----- */
+@media (max-width: 480px) {
+
+    .logo-tienda {
+        font-size: 15px;
+        letter-spacing: 1px;
+    }
+
+    .logo-tienda span {
+        font-size: 10px;
+    }
+
+    .banner-texto {
+        padding: 26px 18px;
+    }
+
+    .banner-texto h1 {
+        font-size: 24px;
+    }
+
+    .banner-imagen,
+    .banner-secundario .banner-imagen {
+        height: 220px;
+    }
+
+    /* Catálogo: 1 columna */
+    .contenedor-productos {
+        grid-template-columns: 1fr;
+    }
+
+    .tarjeta-producto img {
+        height: 260px;
+    }
+
+    .boton-principal {
+        display: block;
+        width: 100%;
+        text-align: center;
+    }
+
+    .barra-filtros {
+        gap: 8px;
+    }
+
+    .total-pagar {
+        font-size: 20px;
+    }
+}

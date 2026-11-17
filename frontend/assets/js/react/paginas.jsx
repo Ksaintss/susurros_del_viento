@@ -209,15 +209,15 @@ function PaginaCarrito() {
             ) : (
               carrito.map((item, indice) => (
                 <tr key={indice}>
-                  <td>
+                  <td data-label="Producto">
                     <div className="producto-carrito">
                       {item.imagen && <img src={rutaImagen(item.imagen)} alt={item.nombre} />}
                       <span>{item.nombre}</span>
                     </div>
                   </td>
-                  <td>{item.personaje}</td>
-                  <td>{formatoCOP(item.precio)}</td>
-                  <td>
+                  <td data-label="Personaje">{item.personaje}</td>
+                  <td data-label="Precio">{formatoCOP(item.precio)}</td>
+                  <td data-label="Acción">
                     <button className="boton-eliminar" onClick={() => quitar(indice)}>
                       Quitar
                     </button>
@@ -376,7 +376,7 @@ function PaginaLogin() {
     evento.preventDefault();
 
     try {
-      const datos = await enviarJSON('/api/login', login, 'No se pudo iniciar sesión.');
+      const datos = await enviarJSON('/login', login, 'No se pudo iniciar sesión.');
 
       setEstadoLogin(datos.mensaje);
       iniciarSesion(datos.usuario, datos.token);
@@ -393,7 +393,7 @@ function PaginaLogin() {
     evento.preventDefault();
 
     try {
-      const datos = await enviarJSON('/api/registro', registro, 'No se pudo registrar.');
+      const datos = await enviarJSON('/registro', registro, 'No se pudo registrar.');
 
       setEstadoRegistro(datos.mensaje);
       setRegistro({ nombre: '', correo: '', password: '' });
@@ -663,7 +663,7 @@ function PaginaDashboard() {
         </form>
 
         {/* Productos y mensajes actuales */}
-        <div className="contenedor-carrito" style={{ flex: 1, minWidth: '320px' }}>
+        <div className="contenedor-carrito panel-dashboard">
           <h3 style={{ marginBottom: '15px', textTransform: 'uppercase', fontSize: '16px' }}>
             Productos en Base de Datos
           </h3>
@@ -684,10 +684,10 @@ function PaginaDashboard() {
               ) : (
                 productos.map((p) => (
                   <tr key={p._id}>
-                    <td>{p.nombre}</td>
-                    <td>{p.personaje}</td>
-                    <td>{formatoCOP(p.precio)}</td>
-                    <td>
+                    <td data-label="Nombre">{p.nombre}</td>
+                    <td data-label="Personaje">{p.personaje}</td>
+                    <td data-label="Precio">{formatoCOP(p.precio)}</td>
+                    <td data-label="Acción">
                       <button className="boton-eliminar" onClick={() => eliminarProducto(p._id)}>
                         Eliminar
                       </button>
@@ -721,9 +721,9 @@ function PaginaDashboard() {
               ) : (
                 mensajes.map((m) => (
                   <tr key={m._id}>
-                    <td>{m.nombre}</td>
-                    <td>{m.correo}</td>
-                    <td>{m.mensaje}</td>
+                    <td data-label="Cliente">{m.nombre}</td>
+                    <td data-label="Correo">{m.correo}</td>
+                    <td data-label="Mensaje">{m.mensaje}</td>
                   </tr>
                 ))
               )}
