@@ -2,7 +2,7 @@
 // ARCHIVO PRINCIPAL DE JAVASCRIPT (main.js)
 // =======================================================
 
-const URL_API = 'http://localhost:3000/api';
+const URL_API = 'https://backend-susurrosdelviento.onrender.com';
 
 // Rutas: este script lo cargan index.html (raíz) y las páginas de assets/pages/
 const EN_PAGINAS = window.location.pathname.indexOf('/assets/pages/') !== -1;
